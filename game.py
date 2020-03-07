@@ -19,7 +19,7 @@ if True:
     font_small = pygame.font.SysFont("comicsansms", 15)
     font_medium = pygame.font.SysFont("comicsansms", 25)
     title = font_medium.render("Volleyball Name Pending", True, black)
-    play_button = font_small.render("Play", True, black)
+    play = font_small.render("Play", True, black)
     screen = pygame.display.set_mode( (width, height) )
     pygame.mouse.set_visible(False)
     #internal clock creates a slight delay to prevent program from speeding
@@ -28,6 +28,7 @@ if True:
     menu = True
     selection = True
     all_sprites = pygame.sprite.Group()
+    
 pygame.display.flip()
 class Cursor(pygame.sprite.Sprite):
     """Class for the sprite that follows and replaces the cursor"""
@@ -46,13 +47,24 @@ class Menu_button(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)   
         self.image = pygame.Surface((150, 50))
-        self.image.fill(red)
+        self.image.fill(dark_brown)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+    def update(self):
+        click = pygame.sprite.spritecollide(self, cursor_group, False)
+        if click:
+            self.image.fill(grey)
+        else:
+            self.image.fill(dark_brown)
+
 mouse = pygame.mouse.get_pos()
+play_button = Menu_button(500, 270)
+cursor_group = pygame.sprite.Group()
 cursor = Cursor()
+all_sprites.add(play_button)
 all_sprites.add(cursor)
+cursor_group.add(cursor)
 
 while menu:
     clock.tick(120)
@@ -61,10 +73,19 @@ while menu:
         #exits the game when called to exit
         if event.type == pygame.QUIT:
             sys.exit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            click = pygame.sprite.spritecollide(play_button, cursor_group, False)
+            for n in click:
+                menu = False
+
+
     mouse = pygame.mouse.get_pos()
+    play_button.update()
     cursor.update()
     screen.fill(light_brown)
     all_sprites.draw(screen)
+    screen.blit(title, (400, 100))
+    screen.blit(play, (550, 290))
     pygame.display.update()
     
 #begin the game bois!
