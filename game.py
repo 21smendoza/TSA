@@ -27,27 +27,44 @@ if True:
     run = True
     menu = True
     selection = True
+    all_sprites = pygame.sprite.Group()
 pygame.display.flip()
+class Cursor(pygame.sprite.Sprite):
+    """Class for the sprite that follows and replaces the cursor"""
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)   
+        self.image = pygame.Surface((5, 5))
+        self.rect = self.image.get_rect()
+        self.rect.x = mouse[0]
+        self.rect.y = mouse[1]
+    def update(self):
+        self.rect.x = mouse[0]
+        self.rect.y = mouse[1]
+
+class Menu_button(pygame.sprite.Sprite):
+    """Class for the buttons on the menu screen"""
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)   
+        self.image = pygame.Surface((150, 50))
+        self.image.fill(red)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+mouse = pygame.mouse.get_pos()
+cursor = Cursor()
+all_sprites.add(cursor)
+
 while menu:
     clock.tick(120)
-
+    
     for event in pygame.event.get():
         #exits the game when called to exit
         if event.type == pygame.QUIT:
             sys.exit()
-    
-    screen.fill(light_brown)
-    screen.blit(title, (width / 2.5, height / 6))
     mouse = pygame.mouse.get_pos()
-    #(500, 270) - (650, 330)
-    print(mouse)
-    if 650 > mouse[0] > 500 and 330 > mouse[1] > 270:
-        pygame.draw.rect(screen, grey,(500,270,150,60))
-    else:
-        pygame.draw.rect(screen, dark_brown,(500,270,150,60))
-    cursor = pygame.draw.circle(screen, black, (mouse[0], mouse[1]), 3)
-    pygame.display.update()
-    screen.blit(play_button, (570, 290))
+    cursor.update()
+    screen.fill(light_brown)
+    all_sprites.draw(screen)
     pygame.display.update()
     
 #begin the game bois!
