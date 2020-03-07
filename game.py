@@ -20,6 +20,7 @@ if True:
     font_medium = pygame.font.SysFont("comicsansms", 25)
     title = font_medium.render("Volleyball Name Pending", True, black)
     play = font_small.render("Play", True, black)
+    end_game = font_small.render("Quit", True, black)
     screen = pygame.display.set_mode( (width, height) )
     pygame.mouse.set_visible(False)
     #internal clock creates a slight delay to prevent program from speeding
@@ -60,12 +61,15 @@ class Menu_button(pygame.sprite.Sprite):
 
 mouse = pygame.mouse.get_pos()
 play_button = Menu_button(500, 270)
+quit_button = Menu_button(500, 400)
 cursor_group = pygame.sprite.Group()
 cursor = Cursor()
 all_sprites.add(play_button)
+all_sprites.add(quit_button)
 all_sprites.add(cursor)
 cursor_group.add(cursor)
 
+#programs the menu portion of the game
 while menu:
     clock.tick(120)
     
@@ -77,15 +81,20 @@ while menu:
             click = pygame.sprite.spritecollide(play_button, cursor_group, False)
             for n in click:
                 menu = False
+            click = pygame.sprite.spritecollide(quit_button, cursor_group, False)
+            for n in click:
+                sys.exit()
 
 
     mouse = pygame.mouse.get_pos()
     play_button.update()
+    quit_button.update()
     cursor.update()
     screen.fill(light_brown)
     all_sprites.draw(screen)
     screen.blit(title, (400, 100))
     screen.blit(play, (550, 290))
+    screen.blit(end_game, (550, 420))
     pygame.display.update()
     
 #begin the game bois!
