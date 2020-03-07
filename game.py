@@ -6,22 +6,50 @@ import math
 #initializes the program
 pygame.init()
 pygame.mixer.init()
-dark_brown = (102, 51, 0)
-light_brown = (153, 76, 0)
-lightest_brown = (255, 229, 204)
-black = (0, 0, 0)
-grey = (96, 96, 96)
 
-width = 1100
-height = 650
-screen = pygame.display.set_mode( (width, height) )
-#internal clock creates a slight delay to prevent program from speeding
-clock = pygame.time.Clock()
-
+#if statement will contain many of the variables for the code to run later on
+if True:
+    dark_brown = (102, 51, 0)
+    light_brown = (153, 76, 0)
+    lightest_brown = (255, 229, 204)
+    black = (0, 0, 0)
+    grey = (96, 96, 96)
+    width = 1100
+    height = 650
+    font_small = pygame.font.SysFont("comicsansms", 15)
+    font_medium = pygame.font.SysFont("comicsansms", 25)
+    title = font_medium.render("Volleyball Name Pending", True, black)
+    play_button = font_small.render("Play", True, black)
+    screen = pygame.display.set_mode( (width, height) )
+    pygame.mouse.set_visible(False)
+    #internal clock creates a slight delay to prevent program from speeding
+    clock = pygame.time.Clock()
+    run = True
+    menu = True
+    selection = True
 pygame.display.flip()
+while menu:
+    clock.tick(120)
 
-run = True
-
+    for event in pygame.event.get():
+        #exits the game when called to exit
+        if event.type == pygame.QUIT:
+            sys.exit()
+    
+    screen.fill(light_brown)
+    screen.blit(title, (width / 2.5, height / 6))
+    mouse = pygame.mouse.get_pos()
+    #(500, 270) - (650, 330)
+    print(mouse)
+    if 650 > mouse[0] > 500 and 330 > mouse[1] > 270:
+        pygame.draw.rect(screen, grey,(500,270,150,60))
+    else:
+        pygame.draw.rect(screen, dark_brown,(500,270,150,60))
+    cursor = pygame.draw.circle(screen, black, (mouse[0], mouse[1]), 3)
+    pygame.display.update()
+    screen.blit(play_button, (570, 290))
+    pygame.display.update()
+    
 #begin the game bois!
 while run:
     clock.tick(60)
