@@ -10,12 +10,13 @@ pygame.mixer.init()
 #if statement will contain many of the variables for the code to run later on
 if True:
     dark_brown = (102, 51, 0)
+    brown = (120, 60, 30)
     light_brown = (153, 76, 0)
     lightest_brown = (255, 229, 204)
     black = (0, 0, 0)
     grey = (96, 96, 96)
-    width = 1100
-    height = 650
+    width = 1125
+    height = 1000
     font_small = pygame.font.SysFont("comicsansms", 15)
     font_medium = pygame.font.SysFont("comicsansms", 25)
     title = font_medium.render("Volleyball Name Pending", True, black)
@@ -66,7 +67,7 @@ class Player_card(pygame.sprite.Sprite):
     """Class for the sprites of the cards that allows the user to choose characters"""
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame. Surface((125, 175))
+        self.image = pygame.Surface((125, 175))
         self.image.fill(dark_brown)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -77,6 +78,38 @@ class Player_card(pygame.sprite.Sprite):
             self.image.fill(grey)
         else:
             self.image.fill(dark_brown)
+
+class Player_field(pygame.sprite.Sprite):
+    """Class for the tiles on the player side"""
+    def __init__(self, x, y, x_pos, y_pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((120, 120))
+        self.image.fill(lightest_brown)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+    def update(self):
+        click = pygame.sprite.spritecollide(self, cursor_group, False)
+        if click:
+            self.image.fill(grey)
+        else:
+            self.image.fill(lightest_brown)
+
+class Enemy_field(pygame.sprite.Sprite):
+    """Class for the tiles on the enemy side"""
+    def __init__(self, x, y, x_pos, y_pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((120, 120))
+        self.image.fill(lightest_brown)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+    def update(self):
+        click = pygame.sprite.spritecollide(self, cursor_group, False)
 
 #these variables set up the sprites found in the menu portion of the game
 mouse = pygame.mouse.get_pos()
@@ -226,31 +259,69 @@ while selection:
         proceed_button.update()
     pygame.display.update()
 
+#removes all of the cards from the sprite group
+Player_cards.empty()
+Player_fields = pygame.sprite.Group()
+Enemy_fields = pygame.sprite.Group()
+all_sprites.remove(proceed_button)
+
+#creates the location for each tile, which will allow position to determine the coordinates later
+
+for x in range(0, 500, 125):
+    for y in range(0, 500, 125):
+        tile = Player_field(50+x, 150+y, x / 125 + 1, y / 125 + 1)
+        Player_fields.add(tile)
+        print(tile.x_pos, tile.y_pos)
+
+for x in range(0, 500, 125):
+    for y in range(0, 500, 125):
+        tile = Enemy_field(575+x, 150+y, x / 125 + 1, y / 125 + 1)
+        Enemy_fields.add(tile)
+        print(tile.x_pos, tile.y_pos)
+
+card_1 = Player_card(40, 700)
+card_2 = Player_card(220, 700)
+card_3 = Player_card(400, 700)
+card_4 = Player_card(580, 700)
+card_5 = Player_card(740, 700)
+card_6 = Player_card(920, 700)
+
+for card in selected:
+    if card == 1:
+        Player_cards.add(card_1)
+    if card == 2:
+        Player_cards.add(card_2)
+    if card == 3:
+        Player_cards.add(card_3)
+    if card == 4:
+        Player_cards.add(card_4)
+    if card == 5:
+        Player_cards.add(card_5)
+    if card == 6:
+        Player_cards.add(card_6)
+
+
 #begin the game bois!
 while run:
-    clock.tick(60)
+    clock.tick(120)
 
     for event in pygame.event.get():
         #exits the game when called to exit
         if event.type == pygame.QUIT:
             sys.exit()
     
-    mouse_pos = pygame.mouse.get_pos()
-    print(mouse_pos)
+    mouse = pygame.mouse.get_pos()
+    
     
     pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
-    pygame.draw.rect(screen, dark_brown, (0, height / 1.3, width, height / 1.8))
-    pygame.draw.polygon(screen, lightest_brown, ((width / 9, 150), (width / 9 * 8, 150), (width / 22 * 21, 450), (width / 22, 450)))
-    pygame.draw.line(screen, black, (int(round(width / 2)), 150), (int(round(width / 2)), 450), 3)
-    pygame.draw.line(screen, black, (int(round(width / 4.8)), 150), (int(round(width / 6.2)), 450), 3)
-    pygame.draw.line(screen, black, (int(round(width / 3.3)), 150), (int(round(width / 3.7)), 450), 3)
-    pygame.draw.line(screen, black, (int(round(width / 2.5)), 150), (int(round(width / 2.6)), 450), 3)
-    pygame.draw.line(screen, black, (int(round(width / 1.655)), 150), (int(round(width / 1.63)), 450), 3)
-    pygame.draw.line(screen, black, (int(round(width / 1.261)), 150), (int(round(width / 1.19)), 450), 3)
-    pygame.draw.line(screen, black, (int(round(width / 1.43)), 150), (int(round(width / 1.385)), 450), 3)
-    pygame.draw.line(screen, black, (int(round(width / 10.6)), 225), (int(round(width / 1.105)), 225), 3)
-    pygame.draw.line(screen, black, (int(round(width / 12.8)), 300), (int(round(width / 1.085)), 300), 3)
-    pygame.draw.line(screen, black, (int(round(width / 16.2)), 375), (int(round(width / 1.067)), 375), 3)
-    pygame.draw.rect(screen, grey, (width / 2 - 10, 130, 20, 350))
+    pygame.draw.rect(screen, brown, (0, height / 1.5, width, height / 1.8))
+    Player_fields.update()
+    Enemy_fields.update()
+    Enemy_fields.draw(screen)
+    Player_fields.draw(screen)
+    cursor.update()
+    cursor_group.draw(screen)
+    Player_cards.update()
+    Player_cards.draw(screen)
 
     pygame.display.update()
