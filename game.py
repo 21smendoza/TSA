@@ -24,6 +24,8 @@ if True:
     end_game = font_small.render("Quit", True, black)
     proceed = font_small.render("Continue", True, black)
     select = font_small.render("Pick three players to use. High attack makes the opposing receiver more likely to drop the ball. High defense makes the player less likely to drop the ball.", True, black)
+    selecting = font_small.render("Pick a card, and pick the tile that you would like to place them in. After placement, you will be unable to switch positions.", True, black)
+    server = font_small.render("Pick a character to serve the ball.", True, black)
     screen = pygame.display.set_mode( (width, height) )
     pygame.mouse.set_visible(False)
     #internal clock creates a slight delay to prevent program from speeding
@@ -127,6 +129,39 @@ class Character(pygame.sprite.Sprite):
         self.y_pos = y_pos
     def update(self):
         click = pygame.sprite.spritecollide(self,cursor_group, False)
+
+class Movement_card(pygame.sprite.Sprite):
+    """Class for the cards that choose movement"""
+    def __init__(self, x, y, x_mov, y_mov):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((150, 150))
+        self.image.fill(dark_brown)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.x_mov = x
+        self.y_mov = y
+    def update(self):
+        click = pygame.sprite.spritecollide(self, cursor_group, False)
+        if click:
+            self.image.fill(grey)
+        else:
+            self.image.fill(dark_brown)
+
+class Ball(pygame.sprite.Sprite):
+    """Class for the volleyball that will move back and forth"""
+    def __init__(self, x, y, x_pos, y_pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((20, 20))
+        self.image.fill(light_brown)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+    def update(self):
+        click = 1
+
 #these variables set up the sprites found in the menu portion of the game
 mouse = pygame.mouse.get_pos()
 play_button = Menu_button(500, 270)
@@ -287,13 +322,11 @@ for x in range(0, 500, 125):
     for y in range(0, 500, 125):
         tile = Enemy_field(575+x, 175+y, x / 125 + 1, y / 125 + 1)
         Enemy_fields.add(tile)
-        print(tile.x_pos, tile.y_pos)
 
 for x in range(0, 500, 125):
     for y in range(0, 500, 125):
         tile = Player_field(50+x, 175+y, x / 125 + 1, y / 125 + 1)
         Player_fields.add(tile)
-        print(tile.x_pos, tile.y_pos)
 
 
 
@@ -377,46 +410,45 @@ while selection_2:
             #allows the placement of characters on new, unselected tiles based on what card is currently chosen
             click = pygame.sprite.spritecollide(cursor, Player_fields, False)
             for n in click:
-                print(tiles_selected)
                 if len(selected) == 1:
                     if 1 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125, n.x_pos, n.y_pos, 30, 70)
+                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 30, 70)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_1)
                             tiles_selected.append(n)
                     if 2 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125, n.x_pos, n.y_pos, 40, 60)
+                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 40, 60)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_2)
                             tiles_selected.append(n)
                     if 3 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125, n.x_pos, n.y_pos, 50, 50)
+                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 50, 50)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_3)
                             tiles_selected.append(n)
                     if 4 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125, n.x_pos, n.y_pos, 60, 40)
+                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 60, 40)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_4)
                             tiles_selected.append(n)
                     if 5 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125, n.x_pos, n.y_pos, 70, 30)
+                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 70, 30)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_5)
                             tiles_selected.append(n)
                     if 6 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125, n.x_pos, n.y_pos, 80, 20)
+                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 80, 20)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_6)
@@ -461,6 +493,7 @@ while selection_2:
     Player_cards.draw(screen)
     user_players.update()
     user_players.draw(screen)
+    screen.blit(selecting, (10, 10))
     cursor.update()
     cursor_group.draw(screen)
 
@@ -468,6 +501,10 @@ while selection_2:
         selection_2 = False
 
     pygame.display.update()
+
+Movement_cards = pygame.sprite.Group()
+serving = True
+ball_group = pygame.sprite.Group()
 
 #begin the game bois!
 while run:
@@ -478,9 +515,38 @@ while run:
         if event.type == pygame.QUIT:
             sys.exit()
     
+    
+    while serving:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click = pygame.sprite.spritecollide(cursor, Player_fields, False)
+                for n in click:
+                    for characters in user_players:
+                        if characters.x_pos == n.x_pos and characters.y_pos == n.y_pos:
+                            ball = Ball(characters.x_pos * 125 - 25, characters.y_pos * 125 + 15, characters.x_pos, characters.y_pos)
+                            ball_group.add(ball)
+                            serving = False
+        mouse = pygame.mouse.get_pos()
+        pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
+        pygame.draw.rect(screen, brown, (0, height / 1.4, width, height / 1.8))
+        Player_fields.update()
+        Enemy_fields.update()
+        Enemy_fields.draw(screen)
+        Player_fields.draw(screen)
+        Player_cards.update()
+        Player_cards.draw(screen)
+        user_players.update()
+        user_players.draw(screen)
+        screen.blit(server, (10,10))
+        cursor.update()
+        cursor_group.draw(screen)
+        pygame.display.update()
+        
+            
+    ball_group.update()
     mouse = pygame.mouse.get_pos()
-    
-    
     pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
     pygame.draw.rect(screen, brown, (0, height / 1.4, width, height / 1.8))
     Player_fields.update()
@@ -492,6 +558,7 @@ while run:
     user_players.update()
     user_players.draw(screen)
     cursor.update()
+    ball_group.draw(screen)
     cursor_group.draw(screen)
 
     pygame.display.update()
