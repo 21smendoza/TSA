@@ -42,6 +42,8 @@ if True:
     menu_buttons = pygame.sprite.Group()
     timer = 0
     moving = False
+    occupied = False
+    move_count = 0
     
 pygame.display.flip()
 class Cursor(pygame.sprite.Sprite):
@@ -103,24 +105,30 @@ class Player_field(pygame.sprite.Sprite):
         self.rect.y = y
         self.x_pos = x_pos
         self.y_pos = y_pos
+        self.movable = False
+
     def move_options(self, x, y):
         global moving
         moving = True
         if self.x_pos == x:
             if self.y_pos == y + 1 or self.y_pos == y - 1:
                 self.image.fill(blue)
+                self.movable = True
         elif self.x_pos == x + 1 or self.x_pos == x - 1:
             if self.y_pos == y:
                 self.image.fill(blue)
+                self.movable = True
     def resolve(self, x, y):
         global moving
         moving = False
         if self.x_pos == x:
             if self.y_pos == y + 1 or self.y_pos == y - 1:
                 self.image.fill(lightest_brown)
+                self.moveable = False
         elif self.x_pos == x + 1 or self.x_pos == x - 1:
             if self.y_pos == y:
                 self.image.fill(lightest_brown)
+                self.moveable = False
     def update(self):
         #if touching cursor, changes color
         global moving
@@ -157,6 +165,17 @@ class Character(pygame.sprite.Sprite):
         self.rect.y = y
         self.x_pos = x_pos
         self.y_pos = y_pos
+        self.hp = 100
+        self.picked = False
+    def move(self, x_in, y_in):
+        global move_count
+        move_count += 1
+        if self.picked:
+            self.x_pos += x_in
+            self.y_pos += y_in
+            self.rect.x = self.x_pos * 125 - 52.5
+            self.rect.y = self.y_pos * 125 + 25
+        
     def update(self):
         #placeholder code after
         click = pygame.sprite.spritecollide(self,cursor_group, False)
@@ -645,7 +664,7 @@ while run:
                         enemy_turn = False
     
     timer = 0
-
+    move_count = 0
     while player_turn:
         clock.tick(120)
 
@@ -654,22 +673,55 @@ while run:
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 clicked = pygame.sprite.spritecollide(cursor, Player_fields, False)
-                if 1 not in selected:
-                    for tile in clicked:
-                        for characters in user_players:
-                            if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
-                                for tiles in Player_fields:
-                                    tiles.move_options(characters.x_pos, characters.y_pos)
-                    selected.append(1)
-                else:
-                    selected.remove(1)
-                    for tile in Player_fields:
-                        for characters in user_players:
-                            if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
-                                for tiles in Player_fields:
-                                    tiles.resolve(characters.x_pos, characters.y_pos)
+                if move_count < 3:
+                    if not moving:
+                        if 1 not in selected:
+                            for tile in clicked:
+                                for characters in user_players:
+                                    if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
+                                        for tiles in Player_fields:
+                                            tiles.move_options(characters.x_pos, characters.y_pos)
+                                            characters.picked = True
+                            selected.append(1)
+                        else:
+                            selected.remove(1)
+                            for tile in Player_fields:
+                                for characters in user_players:
+                                    if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
+                                        for tiles in Player_fields:
+                                            tiles.resolve(characters.x_pos, characters.y_pos)
+                                            characters.picked = False
+                                            occupied = False
+                                            moving = False
+                    else:
+                        for tile in clicked:
+                            for characters in user_players:
+                                if characters.x_pos == tile.x_pos:
+                                    if characters.y_pos == tile.y_pos + 1 or characters.y_pos == tile.y_pos - 1:
+                                        for everyone in user_players:
+                                            if everyone.x_pos == tile.x_pos and everyone.y_pos == tile.y_pos:
+                                                occupied = True
+                                        if characters.picked and not occupied:
+                                            characters.move(tile.x_pos - characters.x_pos, tile.y_pos - characters.y_pos)
+                                            tile.movable = False
+                                            moving = False
+                                            occupied = False
+                                if characters.y_pos == tile.y_pos:
+                                    if characters.x_pos == tile.x_pos + 1 or characters.x_pos == tile.x_pos - 1:
+                                        for everyone in user_players:
+                                            if everyone.x_pos == tile.x_pos and everyone.y_pos == tile.y_pos:
+                                                occupied = True
+                                        if characters.picked and not occupied:
+                                            characters.move(tile.x_pos - characters.x_pos, tile.y_pos - characters.y_pos)
+                                            tile.movable = False
+                                            moving = False
+                                            occupied = False
+                        occupied = False
+    
+
                     
-        
+        print(f'Occupied is {occupied}')
+        print(f'moving is {moving}')
         ball_group.update()
         mouse = pygame.mouse.get_pos()
         pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
