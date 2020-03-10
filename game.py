@@ -38,7 +38,7 @@ if True:
     selection = True
     selection_2 = True
     selected = []
-    all_sprites = pygame.sprite.Group()
+    menu_buttons = pygame.sprite.Group()
     
 pygame.display.flip()
 class Cursor(pygame.sprite.Sprite):
@@ -185,9 +185,8 @@ mouse = pygame.mouse.get_pos()
 play_button, quit_button = Menu_button(500, 270), Menu_button(500, 400)
 cursor_group = pygame.sprite.Group()
 cursor = Cursor()
-all_sprites.add(play_button)
-all_sprites.add(quit_button)
-all_sprites.add(cursor)
+menu_buttons.add(play_button)
+menu_buttons.add(quit_button)
 cursor_group.add(cursor)
 
 #programs the menu portion of the game
@@ -208,11 +207,11 @@ while menu:
 
 
     mouse = pygame.mouse.get_pos()
-    play_button.update()
-    quit_button.update()
+    menu_buttons.update()
     cursor.update()
     screen.fill(light_brown)
-    all_sprites.draw(screen)
+    menu_buttons.draw(screen)
+    cursor_group.draw(screen)
     screen.blit(title, (400, 100))
     screen.blit(play, (550, 290))
     screen.blit(end_game, (550, 420))
@@ -220,7 +219,7 @@ while menu:
 
 
 #these variables set up the sprites for the player selection portion of the game
-all_sprites.remove(play_button, quit_button)
+menu_buttons.remove(play_button, quit_button)
 Player_cards = pygame.sprite.Group()
 card_1 = Player_card(40, 100, 30, 70)
 card_2 = Player_card(220, 100, 40, 60)
@@ -230,7 +229,7 @@ card_5 = Player_card(740, 100, 70, 30)
 card_6 = Player_card(920, 100, 80, 20)
 Player_cards.add(card_1, card_2, card_3, card_4, card_5, card_6)
 proceed_button = Menu_button(475, 500)
-all_sprites.add(proceed_button)
+menu_buttons.add(proceed_button)
 
 
 #programs the character selection portion of the game
@@ -319,7 +318,7 @@ while selection:
     Player_cards.update()
     screen.fill(light_brown)
     Player_cards.draw(screen)
-    all_sprites.draw(screen)
+    menu_buttons.draw(screen)
     cursor_group.draw(screen)
     screen.blit(select, (10, 10))
     #if the 3 cards are selected, then the option to continue becomes available
@@ -332,7 +331,6 @@ while selection:
 Player_cards.empty()
 Player_fields = pygame.sprite.Group()
 Enemy_fields = pygame.sprite.Group()
-all_sprites.remove(proceed_button)
 
 #creates the location for each tile
 
