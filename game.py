@@ -654,23 +654,20 @@ while run:
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 clicked = pygame.sprite.spritecollide(cursor, Player_fields, False)
-                if not moving:
-                    if 1 not in selected:
-                        for tile in clicked:
-                            for characters in user_players:
-                                if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
-                                    for tiles in Player_fields:
-                                        tiles.move_options(characters.x_pos, characters.y_pos)
-                        selected.append(1)
-                    else:
-                        selected.remove(1)
-                        for tile in Player_fields:
-                            for characters in user_players:
-                                if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
-                                    for tiles in Player_fields:
-                                        tiles.resolve(characters.x_pos, characters.y_pos)
+                if 1 not in selected:
+                    for tile in clicked:
+                        for characters in user_players:
+                            if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
+                                for tiles in Player_fields:
+                                    tiles.move_options(characters.x_pos, characters.y_pos)
+                    selected.append(1)
                 else:
-                    print('bruh')
+                    selected.remove(1)
+                    for tile in Player_fields:
+                        for characters in user_players:
+                            if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
+                                for tiles in Player_fields:
+                                    tiles.resolve(characters.x_pos, characters.y_pos)
                     
         
         ball_group.update()
