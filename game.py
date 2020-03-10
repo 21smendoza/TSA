@@ -18,6 +18,8 @@ if True:
     yellow = (218, 165, 32)
     width = 1125
     height = 1000
+    player_score = 0
+    enemy_score = 0
     font_small = pygame.font.SysFont("comicsansms", 15)
     font_medium = pygame.font.SysFont("comicsansms", 25)
     title = font_medium.render("Volleyball Name Pending", True, black)
@@ -180,8 +182,7 @@ class Ball(pygame.sprite.Sprite):
 
 #these variables set up the sprites found in the menu portion of the game
 mouse = pygame.mouse.get_pos()
-play_button = Menu_button(500, 270)
-quit_button = Menu_button(500, 400)
+play_button, quit_button = Menu_button(500, 270), Menu_button(500, 400)
 cursor_group = pygame.sprite.Group()
 cursor = Cursor()
 all_sprites.add(play_button)
@@ -621,7 +622,18 @@ while run:
                     enemy_turn = False
         
 
-    #while player_turn:
+    """while player_turn:
+        clock.tick(60)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                #yuh"""
+        
+
+
+
 
     #updates and draws the sprites
     ball_group.update()
