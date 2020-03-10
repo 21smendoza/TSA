@@ -16,6 +16,7 @@ if True:
     black = (0, 0, 0)
     grey = (96, 96, 96)
     yellow = (218, 165, 32)
+    blue = (0, 64, 255)
     width = 1125
     height = 1000
     player_score = 0
@@ -39,6 +40,8 @@ if True:
     selection_2 = True
     selected = []
     menu_buttons = pygame.sprite.Group()
+    timer = 0
+    moving = False
     
 pygame.display.flip()
 class Cursor(pygame.sprite.Sprite):
@@ -100,13 +103,33 @@ class Player_field(pygame.sprite.Sprite):
         self.rect.y = y
         self.x_pos = x_pos
         self.y_pos = y_pos
+    def move_options(self, x, y):
+        global moving
+        moving = True
+        if self.x_pos == x:
+            if self.y_pos == y + 1 or self.y_pos == y - 1:
+                self.image.fill(blue)
+        elif self.x_pos == x + 1 or self.x_pos == x - 1:
+            if self.y_pos == y:
+                self.image.fill(blue)
+    def resolve(self, x, y):
+        global moving
+        moving = False
+        if self.x_pos == x:
+            if self.y_pos == y + 1 or self.y_pos == y - 1:
+                self.image.fill(lightest_brown)
+        elif self.x_pos == x + 1 or self.x_pos == x - 1:
+            if self.y_pos == y:
+                self.image.fill(lightest_brown)
     def update(self):
         #if touching cursor, changes color
-        click = pygame.sprite.spritecollide(self, cursor_group, False)
-        if click:
-            self.image.fill(grey)
-        else:
-            self.image.fill(lightest_brown)
+        global moving
+        if not moving:
+            click = pygame.sprite.spritecollide(self, cursor_group, False)
+            if click:
+                self.image.fill(grey)
+            else:
+                self.image.fill(lightest_brown)
 
 class Enemy_field(pygame.sprite.Sprite):
     """Class for the tiles on the enemy side"""
@@ -172,8 +195,8 @@ class Ball(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
     def toss(self, x_in, y_in):
-        x_pos = x_in
-        y_pos = y_in
+        self.x_pos = x_in
+        self.y_pos = y_in
         self.rect.x = x_in * 125
         self.rect.y = y_in * 125 + 15
     def update(self):
@@ -221,12 +244,12 @@ while menu:
 #these variables set up the sprites for the player selection portion of the game
 menu_buttons.remove(play_button, quit_button)
 Player_cards = pygame.sprite.Group()
-card_1 = Player_card(40, 100, 30, 70)
-card_2 = Player_card(220, 100, 40, 60)
-card_3 = Player_card(400, 100, 50, 50)
-card_4 = Player_card(580, 100, 60, 40)
-card_5 = Player_card(740, 100, 70, 30)
-card_6 = Player_card(920, 100, 80, 20)
+card_1 = Player_card(45, 100, 30, 70)
+card_2 = Player_card(230, 100, 40, 60)
+card_3 = Player_card(415, 100, 50, 50)
+card_4 = Player_card(600, 100, 60, 40)
+card_5 = Player_card(765, 100, 70, 30)
+card_6 = Player_card(950, 100, 80, 20)
 Player_cards.add(card_1, card_2, card_3, card_4, card_5, card_6)
 proceed_button = Menu_button(475, 500)
 menu_buttons.add(proceed_button)
@@ -346,12 +369,12 @@ for x in range(0, 500, 125):
 
 
 #set up for selectable cards
-card_1 = Player_card(40, 700, 30, 70)
-card_2 = Player_card(220, 700, 40, 60)
-card_3 = Player_card(400, 700, 50, 50)
-card_4 = Player_card(580, 700, 60, 40)
-card_5 = Player_card(740, 700, 70, 30)
-card_6 = Player_card(920, 700, 80, 20)
+card_1 = Player_card(45, 700, 30, 70)
+card_2 = Player_card(230, 700, 40, 60)
+card_3 = Player_card(415, 700, 50, 50)
+card_4 = Player_card(600, 700, 60, 40)
+card_5 = Player_card(765, 700, 70, 30)
+card_6 = Player_card(950, 700, 80, 20)
 
 #adds cards to second phase of selection based on if they were selected before
 for card in selected:
@@ -521,6 +544,7 @@ while selection_2:
     pygame.display.update()
 
 #setting up variables for game
+selected = []
 Movement_cards = pygame.sprite.Group()
 serving = True
 ball_group = pygame.sprite.Group()
@@ -557,12 +581,7 @@ while run:
                         if characters.x_pos == n.x_pos and characters.y_pos == n.y_pos:
                             ball = Ball(characters.x_pos * 125 - 25, characters.y_pos * 125 + 15, characters.x_pos, characters.y_pos)
                             ball_group.add(ball)
-                            if player_turn:
-                                player_turn = False
-                                enemy_turn = True
-                            else:
-                                player_turn = True
-                                enemy_turn = False
+                            enemy_turn = True
                             serving = False
         #updates the sprites and draws them
         mouse = pygame.mouse.get_pos()
@@ -583,16 +602,21 @@ while run:
         cursor.update()
         cursor_group.draw(screen)
         pygame.display.update()
-    
-    while enemy_turn:
-        clock.tick(60)
+        if not serving:
+            #time delay is a placeholder until we have the physics working
+            pygame.time.delay(500)
+            ball.wait(width/ 2.05, ball.y_pos * 125)
+    #like player serving, except randomly chosen and for the computer instead
+    #while returning:
+    timer = 0
 
+    while enemy_turn:
+        clock.tick(120)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-
-        pygame.time.delay(500)
-        ball.wait(width/ 2, ball.y_pos * 125)
+    
         ball_group.update()
         mouse = pygame.mouse.get_pos()
         pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
@@ -611,23 +635,63 @@ while run:
         ball_group.draw(screen)
         cursor_group.draw(screen)
         pygame.display.update()
-        pygame.time.delay(500)
-        for enemies in Enemy_players:
-            if enemies.x_pos == ball.x_pos + 4:
-                if enemies.y_pos == ball.y_pos:
-                    ball.toss(enemies.x_pos, enemies.y_pos)
-                    player_turn = True
-                    enemy_turn = False
-        
+        timer += 1
+        if timer > 250:
+            for enemies in Enemy_players:
+                if enemies.x_pos == ball.x_pos + 4:
+                    if enemies.y_pos == ball.y_pos:
+                        ball.toss(enemies.x_pos, enemies.y_pos)
+                        player_turn = True
+                        enemy_turn = False
+    
+    timer = 0
 
-    """while player_turn:
-        clock.tick(60)
+    while player_turn:
+        clock.tick(120)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                #yuh"""
+                clicked = pygame.sprite.spritecollide(cursor, Player_fields, False)
+                if not moving:
+                    if 1 not in selected:
+                        for tile in clicked:
+                            for characters in user_players:
+                                if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
+                                    for tiles in Player_fields:
+                                        tiles.move_options(characters.x_pos, characters.y_pos)
+                        selected.append(1)
+                    else:
+                        selected.remove(1)
+                        for tile in Player_fields:
+                            for characters in user_players:
+                                if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
+                                    for tiles in Player_fields:
+                                        tiles.resolve(characters.x_pos, characters.y_pos)
+                else:
+                    print('bruh')
+                    
+        
+        ball_group.update()
+        mouse = pygame.mouse.get_pos()
+        pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
+        pygame.draw.rect(screen, brown, (0, height / 1.4, width, height / 1.8))
+        Player_fields.update()
+        Enemy_fields.update()
+        Enemy_fields.draw(screen)
+        Player_fields.draw(screen)
+        Player_cards.update()
+        Player_cards.draw(screen)
+        user_players.update()
+        user_players.draw(screen)
+        cursor.update()
+        Enemy_players.update()
+        Enemy_players.draw(screen)
+        ball_group.draw(screen)
+        cursor_group.draw(screen)
+        pygame.display.update()
+
         
 
 
