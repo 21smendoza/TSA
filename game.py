@@ -118,7 +118,11 @@ class Player_field(pygame.sprite.Sprite):
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.movable = False
-
+        self.color = lightest_brown
+    def toss_options(self, x, y):
+        x_location = self.x_pos + x
+        y_location = self.y_pos + y
+        return (x_location, y_location)
     def move_options(self, x, y):
         global moving
         moving = True
@@ -135,11 +139,11 @@ class Player_field(pygame.sprite.Sprite):
         moving = False
         if self.x_pos == x:
             if self.y_pos == y + 1 or self.y_pos == y - 1:
-                self.image.fill(lightest_brown)
+                self.image.fill(self.color)
                 self.moveable = False
         elif self.x_pos == x + 1 or self.x_pos == x - 1:
             if self.y_pos == y:
-                self.image.fill(lightest_brown)
+                self.image.fill(self.color)
                 self.moveable = False
     def update(self):
         #if touching cursor, changes color
@@ -149,7 +153,7 @@ class Player_field(pygame.sprite.Sprite):
             if click:
                 self.image.fill(grey)
             else:
-                self.image.fill(lightest_brown)
+                self.image.fill(self.color)
 
 class Enemy_field(pygame.sprite.Sprite):
     """Class for the tiles on the enemy side"""
@@ -202,8 +206,8 @@ class Movement_card(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.x_mov = x
-        self.y_mov = y
+        self.x_mov = x_mov
+        self.y_mov = y_mov
         self.order = order
     def update(self):
         global selected
@@ -531,8 +535,6 @@ while selection_2:
                             selected = []
                             Player_cards.remove(card_6)
                             tiles_selected.append(n)
-                else:
-                    Player_cards.clear()
 
 
     #determines position based on if the card was selected, could be optimized by a lot
@@ -801,6 +803,8 @@ while run:
         cursor_group.draw(screen)
         pygame.display.update()
     #starts the movement card section of the player turn
+    selected = []
+
     while player_turn_2:
         clock.tick(120)
 
@@ -823,6 +827,21 @@ while run:
                             selected.append(5)
                     else:
                         selected.clear()
+                click = pygame.sprite.spritecollide(cursor, Player_fields, False)
+                if selected:
+                    for tiles in click:
+                        for all in Player_fields:
+                            all.color = lightest_brown
+                        for characters in user_players:
+                            if characters.x_pos == tiles.x_pos and characters.y_pos == tiles.y_pos:
+                                location = tiles.toss_options(n.x_mov, n.y_mov)
+                                for tile in Player_fields:
+                                    if tile.x_pos == location[0] and tile.y_pos == location[1]:
+                                        tile.color = red
+                                        tile.image.fill(red)
+                                
+
+
         ball_group.update()
         mouse = pygame.mouse.get_pos()
         pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
