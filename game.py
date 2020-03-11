@@ -17,6 +17,18 @@ if True:
     grey = (96, 96, 96)
     yellow = (218, 165, 32)
     blue = (0, 64, 255)
+    red = (153, 0, 0) #for the 2 up 2 right
+    pink = (204, 0, 255) # for the 2 up 2 left
+    purple = (102, 0, 255) # for the 1 up 1 right
+    dark_blue = (0, 51, 204) # for the 1 up 1 left
+    light_blue = (0, 255, 255) #for the 2 down 2 right
+    light_green = (0, 204, 102) #for the 2 down 2 left
+    dark_green = (0, 102, 0) #for the 1 down 1 right
+    dark_yellow = (204, 204, 0) #for the 1 down 1 left
+    orange = (255, 153, 0) #for the 2 right
+    burnt = (153, 51, 0) #for the 2 left
+    light_purple = (204, 204, 255) #for the 2 up
+    light_pink = (255, 204, 255) #for the 2 down
     width = 1125
     height = 1000
     player_score = 0
@@ -182,22 +194,24 @@ class Character(pygame.sprite.Sprite):
 
 class Movement_card(pygame.sprite.Sprite):
     """Class for the cards that choose movement"""
-    def __init__(self, x, y, x_mov, y_mov, order):
+    def __init__(self, x, y, x_mov, y_mov, color, order):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((150, 150))
-        self.image.fill(dark_brown)
+        self.color = color
+        self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.x_mov = x
         self.y_mov = y
+        self.order = order
     def update(self):
         #if touching player, change color
         click = pygame.sprite.spritecollide(self, cursor_group, False)
         if click:
             self.image.fill(grey)
         else:
-            self.image.fill(dark_brown)
+            self.image.fill(self.color)
 
 class Ball(pygame.sprite.Sprite):
     """Class for the volleyball that will move back and forth"""
@@ -517,29 +531,29 @@ while selection_2:
 
     #determines position based on if the card was selected, could be optimized by a lot
     if 1 in selected:
-        card_1.rect.y = 800
+        card_1.rect.y = 775
     else:
-        card_1.rect.y = 725
+        card_1.rect.y = 750
     if 2 in selected:
-        card_2.rect.y = 800
+        card_2.rect.y = 775
     else:
-        card_2.rect.y = 725
+        card_2.rect.y = 750
     if 3 in selected:
-        card_3.rect.y = 800
+        card_3.rect.y = 775
     else:
-        card_3.rect.y = 725
+        card_3.rect.y = 750
     if 4 in selected:
-        card_4.rect.y = 800
+        card_4.rect.y = 775
     else:
-        card_4.rect.y = 725
+        card_4.rect.y = 750
     if 5 in selected:
-        card_5.rect.y = 800
+        card_5.rect.y = 775
     else:
-        card_5.rect.y = 725
+        card_5.rect.y = 750
     if 6 in selected:
-        card_6.rect.y = 800
+        card_6.rect.y = 775
     else:
-        card_6.rect.y = 725
+        card_6.rect.y = 750
     
     mouse = pygame.mouse.get_pos()
     #more drawing code for the sprites
@@ -570,13 +584,52 @@ ball_group = pygame.sprite.Group()
 #always starting with player
 enemy_turn = False
 player_turn = True
+player_turn_2 = False
 #creates an enemy player for every enemy tile, just here to test for position detection without actually programming the enemy AI yet!
 Enemy_players = pygame.sprite.Group()
 for x in range (0, 500, 125):
     for y in range (0, 500, 125):
         enemy = Character(600 + x, 150 + y, x / 125 + 5, y / 125 + 1, 50, 50)
         Enemy_players.add(enemy)
-
+# sets up the first run of the movement card deck
+for x in range(85, 1085, 200):
+    random_card = random.randint(1, 12)
+    if random_card == 1:
+        move_card = Movement_card(x, 775, 2, -2, red, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 2:
+        move_card = Movement_card(x, 775, -2, -2, pink, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 3:
+        move_card = Movement_card(x, 775, 1, -1, purple, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 4:
+        move_card = Movement_card(x, 775, -1, -1, dark_blue, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 5:
+        move_card = Movement_card(x, 775, 2, 2, light_blue, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 6:
+        move_card = Movement_card(x, 775, -2, 2, light_green, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 7:
+        move_card = Movement_card(x, 775, 1, 1, dark_green, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 8:
+        move_card = Movement_card(x, 775, -1, 1, dark_yellow, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 9:
+        move_card = Movement_card(x, 775, 2, 0, orange, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 10:
+        move_card = Movement_card(x, 775, -2, 0, burnt, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 11:
+        move_card = Movement_card(x, 775, 0, -2, light_purple, x / 200)
+        Movement_cards.add(move_card)
+    if random_card == 12:
+        move_card = Movement_card(x, 775, 0, 2, light_pink, x / 200)
+        Movement_cards.add(move_card)
 
 #begin the game bois!
 while run:
@@ -665,6 +718,7 @@ while run:
     
     timer = 0
     move_count = 0
+    #starts the player movement section of the player turn
     while player_turn:
         clock.tick(120)
 
@@ -717,11 +771,37 @@ while run:
                                             moving = False
                                             occupied = False
                         occupied = False
-    
 
-                    
-        print(f'Occupied is {occupied}')
-        print(f'moving is {moving}')
+        if move_count == 3:
+            player_turn = False
+        ball_group.update()
+        mouse = pygame.mouse.get_pos()
+        pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
+        pygame.draw.rect(screen, brown, (0, height / 1.4, width, height / 1.8))
+        Player_fields.update()
+        Enemy_fields.update()
+        Enemy_fields.draw(screen)
+        Player_fields.draw(screen)
+        Player_cards.update()
+        Player_cards.draw(screen)
+        user_players.update()
+        user_players.draw(screen)
+        cursor.update()
+        Enemy_players.update()
+        Enemy_players.draw(screen)
+        ball_group.draw(screen)
+        Movement_cards.update()
+        Movement_cards.draw(screen)
+        cursor_group.draw(screen)
+        pygame.display.update()
+    #starts the movement card section of the player turn
+    while player_turn_2:
+        clock.tick(120)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+        
         ball_group.update()
         mouse = pygame.mouse.get_pos()
         pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
