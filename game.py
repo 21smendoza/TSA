@@ -591,8 +591,10 @@ serving = True
 ball_group = pygame.sprite.Group()
 #always starting with player
 enemy_turn = False
+enemy_move = False
 player_turn = True
 player_turn_2 = False
+player_move = False
 #creates an enemy player for every enemy tile, just here to test for position detection without actually programming the enemy AI yet!
 Enemy_players = pygame.sprite.Group()
 for x in range (0, 500, 125):
@@ -696,7 +698,9 @@ while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-    
+        for all in Player_fields:
+            all.color = lightest_brown
+
         ball_group.update()
         mouse = pygame.mouse.get_pos()
         pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
@@ -804,6 +808,8 @@ while run:
         pygame.display.update()
     #starts the movement card section of the player turn
     selected = []
+    first_done = False
+    second_done = False
 
     while player_turn_2:
         clock.tick(120)
@@ -830,17 +836,31 @@ while run:
                 click = pygame.sprite.spritecollide(cursor, Player_fields, False)
                 if selected:
                     for tiles in click:
-                        for all in Player_fields:
-                            all.color = lightest_brown
-                        for characters in user_players:
-                            if characters.x_pos == tiles.x_pos and characters.y_pos == tiles.y_pos:
-                                location = tiles.toss_options(n.x_mov, n.y_mov)
-                                for tile in Player_fields:
-                                    if tile.x_pos == location[0] and tile.y_pos == location[1]:
-                                        tile.color = red
-                                        tile.image.fill(red)
-                                
-
+                        if tiles.color != red:
+                            for all in Player_fields:
+                                all.color = lightest_brown
+                            for characters in user_players:
+                                if characters.x_pos == tiles.x_pos and characters.y_pos == tiles.y_pos:
+                                    location = tiles.toss_options(n.x_mov, n.y_mov)
+                                    for tile in Player_fields:
+                                        if tile.x_pos == location[0] and tile.y_pos == location[1]:
+                                            tile.color = red
+                                            tile.image.fill(red)
+                                            first_throw = (tile.x_pos, tile.y_pos)
+                        else:
+                            for all in Player_fields:
+                                if all.color != red:
+                                    all.color = lightest_brown
+                                for characters in user_players:
+                                    if characters.x_pos == tiles.x_pos and characters.y_pos == tiles.y_pos:
+                                        location = tiles.toss_options(n.x_mov, n.y_mov)
+                                        for tile in Player_fields:
+                                            if tile.x_pos == location[0] and tile.y_pos == location[1]:
+                                                tile.color =  burnt
+                                                tile.image.fill(burnt)
+                                                second_throw = (tile.x_pos, tile.y_pos)
+                                                player_move = True
+                                                player_turn_2 = False
 
         ball_group.update()
         mouse = pygame.mouse.get_pos()
@@ -863,11 +883,44 @@ while run:
         cursor_group.draw(screen)
         pygame.display.update()
 
+    timer = 0
+
+    while player_move:
+        clock.tick(120)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+        timer += 1
+        if timer < 150:
+            ball.toss(first_throw[0], first_throw[1])
+        if timer >= 150 and timer < 300:
+            ball.toss(second_throw[0], second_throw[1])
+        if timer >= 300:
+            ball.wait(width/ 2.049, ball.y_pos * 125)
+            player_move = False
+            enemy_turn = True
+        ball_group.update()
+        mouse = pygame.mouse.get_pos()
+        pygame.draw.rect(screen, light_brown, (0, 0, width, height / 1.3))
+        pygame.draw.rect(screen, brown, (0, height / 1.4, width, height / 1.8))
+        Player_fields.update()
+        Enemy_fields.update()
+        Enemy_fields.draw(screen)
+        Player_fields.draw(screen)
+        Player_cards.update()
+        Player_cards.draw(screen)
+        user_players.update()
+        user_players.draw(screen)
+        cursor.update()
+        Enemy_players.update()
+        Enemy_players.draw(screen)
+        ball_group.draw(screen)
+        cursor_group.draw(screen)
+        pygame.display.update()
+
         
-
-
-
-
+        
     #updates and draws the sprites
     ball_group.update()
     mouse = pygame.mouse.get_pos()
