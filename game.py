@@ -785,7 +785,7 @@ while run:
                                             occupied = False
                         occupied = False
 
-        if move_count == 3:
+        if move_count == 2:
             player_turn = False
             player_turn_2 = True
         ball_group.update()
