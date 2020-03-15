@@ -833,6 +833,7 @@ while run:
                             selected.append(5)
                     else:
                         selected.clear()
+                print(selected)
                 click = pygame.sprite.spritecollide(cursor, Player_fields, False)
                 if selected:
                     for tiles in click:
@@ -858,9 +859,11 @@ while run:
                                             if tile.x_pos == location[0] and tile.y_pos == location[1]:
                                                 tile.color =  burnt
                                                 tile.image.fill(burnt)
-                                                second_throw = (tile.x_pos, tile.y_pos)
-                                                player_move = True
-                                                player_turn_2 = False
+                                                for characters in user_players:
+                                                    if characters.x_pos == tile.x_pos and characters.y_pos == tile.y_pos:
+                                                        second_throw = (tile.x_pos, tile.y_pos)
+                                                        player_move = True
+                                                        player_turn_2 = False
 
         ball_group.update()
         mouse = pygame.mouse.get_pos()
