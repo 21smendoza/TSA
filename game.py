@@ -29,8 +29,8 @@ if True:
     burnt = (153, 51, 0) #for the 2 left
     light_purple = (204, 204, 255) #for the 2 up
     light_pink = (255, 204, 255) #for the 2 down
-    width = 1125
-    height = 1000
+    width = 675
+    height = 600
     player_score = 0
     enemy_score = 0
     font_small = pygame.font.SysFont("comicsansms", 15)
@@ -74,7 +74,7 @@ class Menu_button(pygame.sprite.Sprite):
     """Class for the buttons on the menu screen"""
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)   
-        self.image = pygame.Surface((150, 50))
+        self.image = pygame.Surface((width / 7, height / 18))
         self.image.fill(dark_brown)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -91,7 +91,7 @@ class Player_card(pygame.sprite.Sprite):
     """Class for the sprites of the cards that allows the user to choose characters"""
     def __init__(self, x, y, attack, defense):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((125, 175))
+        self.image = pygame.Surface((width / 9, height / 6))
         self.image.fill(dark_brown)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -110,7 +110,7 @@ class Player_field(pygame.sprite.Sprite):
     """Class for the tiles on the player side"""
     def __init__(self, x, y, x_pos, y_pos):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((120, 120))
+        self.image = pygame.Surface((width / 9.375, height / 8.33))
         self.image.fill(lightest_brown)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -159,7 +159,7 @@ class Enemy_field(pygame.sprite.Sprite):
     """Class for the tiles on the enemy side"""
     def __init__(self, x, y, x_pos, y_pos):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((120, 120))
+        self.image = pygame.Surface((width / 9.375, height / 8.333))
         self.image.fill(lightest_brown)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -174,7 +174,7 @@ class Character(pygame.sprite.Sprite):
     """Class for every character on the field"""
     def __init__(self, x, y, x_pos, y_pos, attack, defense):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((75, 100))
+        self.image = pygame.Surface((width / 15, height / 10))
         self.image.fill(dark_brown)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -189,8 +189,8 @@ class Character(pygame.sprite.Sprite):
         if self.picked:
             self.x_pos += x_in
             self.y_pos += y_in
-            self.rect.x = self.x_pos * 125 - 52.5
-            self.rect.y = self.y_pos * 125 + 25
+            self.rect.x = self.x_pos * (width / 9) - (width / 21.4)
+            self.rect.y = self.y_pos * (height / 8) + (height / 40)
         
     def update(self):
         #placeholder code after
@@ -200,7 +200,7 @@ class Movement_card(pygame.sprite.Sprite):
     """Class for the cards that choose movement"""
     def __init__(self, x, y, x_mov, y_mov, color, order):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((150, 150))
+        self.image = pygame.Surface((width / 7.5, height / 6.66))
         self.color = color
         self.image.fill(color)
         self.rect = self.image.get_rect()
@@ -212,9 +212,9 @@ class Movement_card(pygame.sprite.Sprite):
     def update(self):
         global selected
         if self.order in selected:
-            self.rect.y = 800
+            self.rect.y = height / 1.25
         else:
-            self.rect.y = 775
+            self.rect.y = height / 1.3
         click = pygame.sprite.spritecollide(self, cursor_group, False)
         if click:
             self.image.fill(grey)
@@ -225,7 +225,7 @@ class Ball(pygame.sprite.Sprite):
     """Class for the volleyball that will move back and forth"""
     def __init__(self, x, y, x_pos, y_pos):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((20, 20))
+        self.image = pygame.Surface(((width / 56.25), (height / 50)))
         self.image.fill(yellow)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -238,15 +238,15 @@ class Ball(pygame.sprite.Sprite):
     def toss(self, x_in, y_in):
         self.x_pos = x_in
         self.y_pos = y_in
-        self.rect.x = x_in * 125
-        self.rect.y = y_in * 125 + 15
+        self.rect.x = x_in * (width / 9)
+        self.rect.y = y_in * (height / 8) + (height / 66.6)
     def update(self):
         #placeholder code after
         click = 1
 
 #these variables set up the sprites found in the menu portion of the game
 mouse = pygame.mouse.get_pos()
-play_button, quit_button = Menu_button(500, 270), Menu_button(500, 400)
+play_button, quit_button = Menu_button(width / 2.25, height / 3.5), Menu_button(width / 2.25, height / 2.5)
 cursor_group = pygame.sprite.Group()
 cursor = Cursor()
 menu_buttons.add(play_button)
@@ -276,23 +276,23 @@ while menu:
     screen.fill(light_brown)
     menu_buttons.draw(screen)
     cursor_group.draw(screen)
-    screen.blit(title, (400, 100))
-    screen.blit(play, (550, 290))
-    screen.blit(end_game, (550, 420))
+    screen.blit(title, (width / 2.8, height / 10))
+    screen.blit(play, (width / 2.05, height / 3.45))
+    screen.blit(end_game, (width / 2.05, height / 2.38))
     pygame.display.update()
 
 
 #these variables set up the sprites for the player selection portion of the game
 menu_buttons.remove(play_button, quit_button)
 Player_cards = pygame.sprite.Group()
-card_1 = Player_card(45, 100, 30, 70)
-card_2 = Player_card(230, 100, 40, 60)
-card_3 = Player_card(415, 100, 50, 50)
-card_4 = Player_card(600, 100, 60, 40)
-card_5 = Player_card(765, 100, 70, 30)
-card_6 = Player_card(950, 100, 80, 20)
+card_1 = Player_card(width / 25, height / 10, 30, 70)
+card_2 = Player_card(width / 4.89, height / 10, 40, 60)
+card_3 = Player_card(width / 2.71, height / 10, 50, 50)
+card_4 = Player_card(width / 1.88, height / 10, 60, 40)
+card_5 = Player_card(width / 1.47, height / 10, 70, 30)
+card_6 = Player_card(width / 1.18, height / 10, 80, 20)
 Player_cards.add(card_1, card_2, card_3, card_4, card_5, card_6)
-proceed_button = Menu_button(475, 500)
+proceed_button = Menu_button(width / 2.37, height / 2)
 menu_buttons.add(proceed_button)
 
 
@@ -353,29 +353,29 @@ while selection:
                     selection = False
     #determines position based on if the card was selected, could be optimized by a lot
     if 1 in selected:
-        card_1.rect.y = 300
+        card_1.rect.y = height / 3.33
     else:
-        card_1.rect.y = 100
+        card_1.rect.y = height / 10
     if 2 in selected:
-        card_2.rect.y = 300
+        card_2.rect.y = height / 3.33
     else:
-        card_2.rect.y = 100
+        card_2.rect.y = height / 10
     if 3 in selected:
-        card_3.rect.y = 300
+        card_3.rect.y = height / 3.33
     else:
-        card_3.rect.y = 100
+        card_3.rect.y = height / 10
     if 4 in selected:
-        card_4.rect.y = 300
+        card_4.rect.y = height / 3.33
     else:
-        card_4.rect.y = 100
+        card_4.rect.y = height / 10
     if 5 in selected:
-        card_5.rect.y = 300
+        card_5.rect.y = height / 3.33
     else:
-        card_5.rect.y = 100
+        card_5.rect.y = height / 10
     if 6 in selected:
-        card_6.rect.y = 300
+        card_6.rect.y = height / 3.33
     else:
-        card_6.rect.y = 100
+        card_6.rect.y = height / 10
     mouse = pygame.mouse.get_pos()
     #updates and draws all sprites onto the screen
     cursor.update()
@@ -384,10 +384,10 @@ while selection:
     Player_cards.draw(screen)
     menu_buttons.draw(screen)
     cursor_group.draw(screen)
-    screen.blit(select, (10, 10))
+    screen.blit(select, (width / 112.5, height / 100))
     #if the 3 cards are selected, then the option to continue becomes available
     if len(selected) == 3:
-        screen.blit(proceed, (490, 510))
+        screen.blit(proceed, (width / 2.3, height / 1.96))
         proceed_button.update()
     pygame.display.update()
 
@@ -398,24 +398,24 @@ Enemy_fields = pygame.sprite.Group()
 
 #creates the location for each tile
 
-for x in range(0, 500, 125):
-    for y in range(0, 500, 125):
-        tile = Enemy_field(575+x, 175+y, x / 125 + 1, y / 125 + 1)
+for x in range(0, round(width / 2.25), round(width / 9)):
+    for y in range(0, round(height / 2), round(height / 8)):
+        tile = Enemy_field(width / 1.96 + x, height / 5.714 + y, x / (width / 9) + 1, y / (height / 8) + 1)
         Enemy_fields.add(tile)
 
-for x in range(0, 500, 125):
-    for y in range(0, 500, 125):
-        tile = Player_field(50+x, 175+y, x / 125 + 1, y / 125 + 1)
+for x in range(0, round(width / 2.25), round(width / 9)):
+    for y in range(0, round(height / 2), round(height / 8)):
+        tile = Player_field(width / 22.5 + x, height / 5.714 + y, x / (width / 9) + 1, y / (height / 8) + 1)
         Player_fields.add(tile)
 
 
 #set up for selectable cards
-card_1 = Player_card(45, 700, 30, 70)
-card_2 = Player_card(230, 700, 40, 60)
-card_3 = Player_card(415, 700, 50, 50)
-card_4 = Player_card(600, 700, 60, 40)
-card_5 = Player_card(765, 700, 70, 30)
-card_6 = Player_card(950, 700, 80, 20)
+card_1 = Player_card(width / 25, height / 1.43, 30, 70)
+card_2 = Player_card(width / 4.89, height / 1.43, 40, 60)
+card_3 = Player_card(width / 2.71, height / 1.43, 50, 50)
+card_4 = Player_card(width / 1.88, height / 1.43, 60, 40)
+card_5 = Player_card(width / 1.47, height / 1.43, 70, 30)
+card_6 = Player_card(width / 1.18, height / 1.43, 80, 20)
 
 #adds cards to second phase of selection based on if they were selected before
 for card in selected:
@@ -495,42 +495,42 @@ while selection_2:
                 if len(selected) == 1:
                     if 1 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 30, 70)
+                            Player = Character(n.x_pos * (width / 9) - (width / 21.4), n.y_pos * (height / 8) + (height / 40), n.x_pos, n.y_pos, 30, 70)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_1)
                             tiles_selected.append(n)
                     if 2 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 40, 60)
+                            Player = Character(n.x_pos * (width / 9) - (width / 21.4), n.y_pos * (height / 8) + (height / 40), n.x_pos, n.y_pos, 40, 60)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_2)
                             tiles_selected.append(n)
                     if 3 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 50, 50)
+                            Player = Character(n.x_pos * (width / 9) - (width / 21.4),n.y_pos * (height / 8) + (height / 40), n.x_pos, n.y_pos, 50, 50)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_3)
                             tiles_selected.append(n)
                     if 4 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 60, 40)
+                            Player = Character(n.x_pos * (width / 9) - (width / 21.4), n.y_pos * (height / 8) + (height / 40), n.x_pos, n.y_pos, 60, 40)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_4)
                             tiles_selected.append(n)
                     if 5 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 70, 30)
+                            Player = Character(n.x_pos * (width / 9) - (width / 21.4), n.y_pos * (height / 8) + (height / 40), n.x_pos, n.y_pos, 70, 30)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_5)
                             tiles_selected.append(n)
                     if 6 in selected:
                         if n not in tiles_selected:
-                            Player = Character(n.x_pos * 125 - 52.5, n.y_pos * 125 + 25, n.x_pos, n.y_pos, 80, 20)
+                            Player = Character(n.x_pos * (width / 9) - (width / 21.4), n.y_pos * (height / 8) + (height / 40), n.x_pos, n.y_pos, 80, 20)
                             user_players.add(Player)
                             selected = []
                             Player_cards.remove(card_6)
@@ -539,29 +539,29 @@ while selection_2:
 
     #determines position based on if the card was selected, could be optimized by a lot
     if 1 in selected:
-        card_1.rect.y = 775
+        card_1.rect.y = height / 1.29
     else:
-        card_1.rect.y = 750
+        card_1.rect.y = height / 1.33
     if 2 in selected:
-        card_2.rect.y = 775
+        card_2.rect.y = height / 1.29
     else:
-        card_2.rect.y = 750
+        card_2.rect.y = height / 1.33
     if 3 in selected:
-        card_3.rect.y = 775
+        card_3.rect.y = height / 1.29
     else:
-        card_3.rect.y = 750
+        card_3.rect.y = height / 1.33
     if 4 in selected:
-        card_4.rect.y = 775
+        card_4.rect.y = height / 1.29
     else:
-        card_4.rect.y = 750
+        card_4.rect.y = height / 1.33
     if 5 in selected:
-        card_5.rect.y = 775
+        card_5.rect.y = height / 1.29
     else:
-        card_5.rect.y = 750
+        card_5.rect.y = height / 1.33
     if 6 in selected:
-        card_6.rect.y = 775
+        card_6.rect.y = height / 1.29
     else:
-        card_6.rect.y = 750
+        card_6.rect.y = height / 1.33
     
     mouse = pygame.mouse.get_pos()
     #more drawing code for the sprites
@@ -597,48 +597,50 @@ player_turn_2 = False
 player_move = False
 #creates an enemy player for every enemy tile, just here to test for position detection without actually programming the enemy AI yet!
 Enemy_players = pygame.sprite.Group()
-for x in range (0, 500, 125):
-    for y in range (0, 500, 125):
-        enemy = Character(600 + x, 150 + y, x / 125 + 5, y / 125 + 1, 50, 50)
+for x in range (0, round(width / 2.25), round(width / 9)):
+    for y in range (0, round(height / 2), round(height / 8)):
+        enemy = Character((width / 1.88) + x, (height / 6.66) + y, x / (width / 9) + 5, y / (height / 8) + 1, 50, 50)
         Enemy_players.add(enemy)
 # sets up the first run of the movement card deck
-for x in range(85, 1085, 200):
+count = 0
+for x in range(0, width, round(width / 5)):
+    count += 1
     random_card = random.randint(1, 12)
     if random_card == 1:
-        move_card = Movement_card(x, 775, 2, -2, red, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + 45, (height / 1.29), 2, -2, red, count)
         Movement_cards.add(move_card)
     if random_card == 2:
-        move_card = Movement_card(x, 775, -2, -2, pink, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), -2, -2, pink, count)
         Movement_cards.add(move_card)
     if random_card == 3:
-        move_card = Movement_card(x, 775, 1, -1, purple, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), 1, -1, purple, count)
         Movement_cards.add(move_card)
     if random_card == 4:
-        move_card = Movement_card(x, 775, -1, -1, dark_blue, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), -1, -1, dark_blue, count)
         Movement_cards.add(move_card)
     if random_card == 5:
-        move_card = Movement_card(x, 775, 2, 2, light_blue, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), 2, 2, light_blue, count)
         Movement_cards.add(move_card)
     if random_card == 6:
-        move_card = Movement_card(x, 775, -2, 2, light_green, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), -2, 2, light_green, count)
         Movement_cards.add(move_card)
     if random_card == 7:
-        move_card = Movement_card(x, 775, 1, 1, dark_green, (x - 85) / 200+ 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), 1, 1, dark_green, count)
         Movement_cards.add(move_card)
     if random_card == 8:
-        move_card = Movement_card(x, 775, -1, 1, dark_yellow, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), -1, 1, dark_yellow, count)
         Movement_cards.add(move_card)
     if random_card == 9:
-        move_card = Movement_card(x, 775, 2, 0, orange, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), 2, 0, orange, count)
         Movement_cards.add(move_card)
     if random_card == 10:
-        move_card = Movement_card(x, 775, -2, 0, burnt, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), -2, 0, burnt, count)
         Movement_cards.add(move_card)
     if random_card == 11:
-        move_card = Movement_card(x, 775, 0, -2, light_purple, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), 0, -2, light_purple, count)
         Movement_cards.add(move_card)
     if random_card == 12:
-        move_card = Movement_card(x, 775, 0, 2, light_pink, (x - 85) / 200 + 1)
+        move_card = Movement_card(x + width / 30, (height / 1.29), 0, 2, light_pink, count)
         Movement_cards.add(move_card)
 
 #begin the game bois!
@@ -661,7 +663,7 @@ while run:
                 for n in click:
                     for characters in user_players:
                         if characters.x_pos == n.x_pos and characters.y_pos == n.y_pos:
-                            ball = Ball(characters.x_pos * 125 - 25, characters.y_pos * 125 + 15, characters.x_pos, characters.y_pos)
+                            ball = Ball(characters.x_pos * (width / 9) - (width / 45), characters.y_pos * (height / 8) + (height / 66.66), characters.x_pos, characters.y_pos)
                             ball_group.add(ball)
                             enemy_turn = True
                             serving = False
@@ -687,7 +689,7 @@ while run:
         if not serving:
             #time delay is a placeholder until we have the physics working
             pygame.time.delay(500)
-            ball.wait(width/ 2.049, ball.y_pos * 125)
+            ball.wait(width/ 2.049, ball.y_pos * (height / 8))
     #like player serving, except randomly chosen and for the computer instead
     #while returning:
     timer = 0
@@ -900,7 +902,7 @@ while run:
         if timer >= 150 and timer < 300:
             ball.toss(second_throw[0], second_throw[1])
         if timer >= 300:
-            ball.wait(width/ 2.049, ball.y_pos * 125)
+            ball.wait(width / 2.049, ball.y_pos * (height / 8))
             player_move = False
             enemy_turn = True
         ball_group.update()
